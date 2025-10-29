@@ -1,41 +1,184 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="UTF-8">
-  <title>ML API</title>
-  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+    <meta charset="UTF-8">
+    <title>Titanic Survival Predictor</title>
+    <link href='https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #2d2d2d;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #00b4d8;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 20px;
+            background: #3d3d3d;
+            border: 2px solid #4d4d4d;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00b4d8;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
+        }
+
+        input[type="text"]::placeholder {
+            color: #888;
+        }
+
+        .btn-predict {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00b4d8, #0077be);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4);
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        .prediction-result {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: #3d3d3d;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #00b4d8;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="login">
-    <h1>Titanic Survival</h1>
+    <div class="container">
+        <h1>Titanic Survival Predictor</h1>
+        
+        <form action="{{ url_for('predict')}}" method="post">
+            <div class="form-group">
+                <input type="text" name="Pclass" placeholder="Passenger Class" required="required">
+                <div class="input-hint">Enter 1 (First), 2 (Second), or 3 (Third) class</div>
+            </div>
 
-    <!-- Main Input For Receiving Query to our ML -->
-    <form action="{{ url_for('predict')}}" method="post">
-      <input type="text" name="Pclass" placeholder="Pclass" required="required" /><br>
-      <input type="text" name="Age" placeholder="Age" required="required" /><br>
-      <input type="text" name="SibSp" placeholder="SibSp" required="required" /><br>
-      <input type="text" name="Parch" placeholder="Parch" required="required" /><br>
-      <input type="text" name="Fare" placeholder="Fare" required="required" /><br>
-      <input type="text" name="male" placeholder="male" required="required" /><br>
-      <input type="text" name="Q" placeholder="Q" required="required" /><br>
-      <input type="text" name="S" placeholder="S" required="required" /><br>
-      <input type="text" name="Miss" placeholder="Miss" required="required" /><br>
-      <input type="text" name="Mr" placeholder="Mr" required="required" /><br>
-      <input type="text" name="Mrs" placeholder="Mrs" required="required" /><br>
-      <input type="text" name="Rare" placeholder="Rare" required="required" /><br>
+            <div class="form-group">
+                <input type="text" name="Age" placeholder="Age" required="required">
+                <div class="input-hint">Enter passenger's age in years</div>
+            </div>
 
-      <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
-    </form>
+            <div class="form-group">
+                <input type="text" name="SibSp" placeholder="Siblings/Spouse" required="required">
+                <div class="input-hint">Number of siblings/spouses aboard</div>
+            </div>
 
-    <br><br>
-  </div>
+            <div class="form-group">
+                <input type="text" name="Parch" placeholder="Parents/Children" required="required">
+                <div class="input-hint">Number of parents/children aboard</div>
+            </div>
 
-  {{prediction_text}}
+            <div class="form-group">
+                <input type="text" name="Fare" placeholder="Ticket Fare" required="required">
+                <div class="input-hint">Price of the ticket in pounds</div>
+            </div>
 
+            <div class="form-group">
+                <input type="text" name="male" placeholder="Gender" required="required">
+                <div class="input-hint">Enter 1 for male, 0 for female</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="Q" placeholder="Queenstown Embarkation" required="required">
+                <div class="input-hint">Enter 1 if embarked from Queenstown, 0 if not</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="S" placeholder="Southampton Embarkation" required="required">
+                <div class="input-hint">Enter 1 if embarked from Southampton, 0 if not</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="Miss" placeholder="Title: Miss" required="required">
+                <div class="input-hint">Enter 1 if title is Miss, 0 if not</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="Mr" placeholder="Title: Mr" required="required">
+                <div class="input-hint">Enter 1 if title is Mr, 0 if not</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="Mrs" placeholder="Title: Mrs" required="required">
+                <div class="input-hint">Enter 1 if title is Mrs, 0 if not</div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" name="Rare" placeholder="Rare Title" required="required">
+                <div class="input-hint">Enter 1 if title is rare (other than Mr/Mrs/Miss), 0 if not</div>
+            </div>
+
+            <button type="submit" class="btn-predict">Predict Survival</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="prediction-result">
+            {{ prediction_text }}
+        </div>
+        {% endif %}
+    </div>
 </body>
 </html>
